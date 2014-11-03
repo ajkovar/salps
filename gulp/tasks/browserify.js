@@ -8,6 +8,8 @@ var debug = require('gulp-debug');
 var rename = require('gulp-rename');
 var rev = require('gulp-rev');
 var source = require('vinyl-source-stream');
+var coffee = require('coffee-script');
+var through = require('through');
 
 // Vendor
 gulp.task('vendor', function() {
@@ -23,11 +25,21 @@ gulp.task('vendor', function() {
 // Browserify
 gulp.task('browserify', function() {
   return browserify({debug: true})
-    .add('./app/scripts/main.js')
+    .add('./app/scripts/main.coffee')
     .external('jquery')
     .external('lodash')
     .external('backbone')
     .transform(partialify) // Transform to allow requireing of templates
+    .transform(function (file) {
+        var data = '';
+        return through(write, end);
+
+        function write (buf) { data += buf }
+        function end () {
+            this.queue(coffee.compile(data));
+            this.queue(null);
+        }
+    })
     .bundle()
     .pipe(source('main.js'))
     .pipe(gulp.dest(config.dist + '/scripts/'));
