@@ -17,6 +17,7 @@ gulp.task('vendor', function() {
     .require('jquery')
     .require('lodash', {expose: 'underscore'})
     .require('backbone')
+    .require('bacon')
     .bundle()
     .pipe(source('vendor.js'))
     .pipe(gulp.dest(config.dist + '/scripts/'));
@@ -29,6 +30,7 @@ gulp.task('browserify', function() {
     .external('jquery')
     .external('lodash')
     .external('backbone')
+    .external('bacon')
     .transform(partialify) // Transform to allow requireing of templates
     .transform(function (file) {
         var data = '';

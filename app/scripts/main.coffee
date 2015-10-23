@@ -1,9 +1,13 @@
 App = require('./app.coffee')
 $ = require('jquery')
+Bacon = require 'baconjs'
+
+console.log Bacon
 
 app = new App()
 
 app.beep()
 
-console.log $(document)
+Bacon.$.asEventStream("click", document).onValue ->
+  console.log 'click'
 
